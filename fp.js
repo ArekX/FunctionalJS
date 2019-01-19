@@ -10,8 +10,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 **/
 
 
+
 export const curry = f => function c(...a) { return a.length < f.length ? c.bind(f, ...a) : f(...a); };
-export const reverseArgs = f => (...a) => f(...a.reverse());
+export const reverseArgs = f => (...a) => f(...a.reverse()); 
 export const compose = (...fs) => v => fs.reverse().reduce((a, f) => f(a), v);
 export const pipe = (...fs) => v => fs.reduce((a, f) => f(a), v);
 export const unzip = a => a.reduce(([a1, a2], c) => [[...a1, c[0]], [...a2, c[1]]], [[], []]);
@@ -30,9 +31,10 @@ export const range = (n, from = 0) => times(n, (i, idx) => idx + from);
 export const map = curry((p, v) => v.map(p));
 export const reduce = curry((p, i, v) => v.reduce(p, i));
 export const reduceRight = curry((p, i, v) => v.reverse().reduce(p, i));
+export const concat = curry((b, a) => [...a, ...b]);
 export const filter = curry((p, v) => v.filter(p));
-export const zip = curry((a, b) => b.reduce((p, c, i) => [...p, [a[i], c]], []));
 export const zipWith = curry((f, a, b) => b.reduce((p, c, i) => [...p, f(a[i], c)], []));
+export const zip = zipWith((a, b) => [a, b]);
 export const tap = curry((f, v) => f(v) ? v : v);
 export const take = curry((n, a) => a.slice(0, n));
 export const takeRight = curry((n, a) => a.slice(Math.max(a.length - n, 0), a.length));
@@ -45,4 +47,6 @@ export const without = curry((vs, a) => a.filter(i => !vs.includes(i)));
 export const initial = curry((n, a) => a.slice(0, a.length - n));
 export const chunk = curry((n, a) => times(Math.ceil(a.length / n), (i, idx) => a.slice(n * idx, n * idx + n)));
 export const after = curry((n, f) => (...a) => n > 1 ? (n-- ? undefined : undefined) : f(...a));
-export const runOnly = curry((n, f) => (...a) => n > 1 ? (n-- ? f(...a) : f(...a)) : undefined);
+export const before = curry((n, f) => (...a) => n > 1 ? (n-- ? f(...a) : f(...a)) : undefined);
+
+
