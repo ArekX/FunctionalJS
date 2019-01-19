@@ -9,9 +9,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **/
 
-
-
 export const curry = f => function c(...a) { return a.length < f.length ? c.bind(f, ...a) : f(...a); };
+export const curryRight = f => function c(...a) { return a.length < f.length ? c.bind(f, ...a) : f(...a.reverse()); };
 export const reverseArgs = f => (...a) => f(...a.reverse()); 
 export const compose = (...fs) => v => fs.reverse().reduce((a, f) => f(a), v);
 export const pipe = (...fs) => v => fs.reduce((a, f) => f(a), v);
@@ -27,6 +26,7 @@ export const memoize = (f, v = undefined) => (...a) => v = v !== undefined ? v :
 export const value = v => () => v;
 export const noop = () => {};
 export const times = curry((n, p) => (new Array(n).fill(0).map(p)));
+export const zipAll = (...a) => a[a.length - 1].reduce((p, c, i) => [...p, times(a.length, (_, idx) => a[idx][i])], []);
 export const range = (n, from = 0) => times(n, (i, idx) => idx + from);
 export const map = curry((p, v) => v.map(p));
 export const reduce = curry((p, i, v) => v.reduce(p, i));
@@ -37,6 +37,7 @@ export const zipWith = curry((f, a, b) => b.reduce((p, c, i) => [...p, f(a[i], c
 export const zip = zipWith((a, b) => [a, b]);
 export const tap = curry((f, v) => f(v) ? v : v);
 export const take = curry((n, a) => a.slice(0, n));
+export const skipTake = curry((idx, a) => a.reduce((p, c, i) => [...p, ...(idx.includes(i) ? [] : [c])], []));
 export const takeRight = curry((n, a) => a.slice(Math.max(a.length - n, 0), a.length));
 export const get = curry((p, o) => o[p]);
 export const pluck = curry((p, v) => map(get(p), v));
@@ -48,5 +49,3 @@ export const initial = curry((n, a) => a.slice(0, a.length - n));
 export const chunk = curry((n, a) => times(Math.ceil(a.length / n), (i, idx) => a.slice(n * idx, n * idx + n)));
 export const after = curry((n, f) => (...a) => n > 1 ? (n-- ? undefined : undefined) : f(...a));
 export const before = curry((n, f) => (...a) => n > 1 ? (n-- ? f(...a) : f(...a)) : undefined);
-
-
